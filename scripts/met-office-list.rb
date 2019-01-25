@@ -71,9 +71,10 @@ def three_hourly_forecast_values(region)
   raw_data = three_hourly_forecast_raw(region)
   raw_data['Period'].map do |key, _value|
     @date = key['value']
-    key['Rep'].map do |weather_data, _v|
-      three_hourly_forecast = forecast_hash(weather_data)
+    key['Rep'].each do |weather_data, _v|
+      three_hourly_forecast[@date] = forecast_hash(weather_data)
     end
+    three_hourly_forecast
   end
   three_hourly_forecast
 end
@@ -95,4 +96,4 @@ def forecast_hash(weather_data)
   }
 end
 
-three_hourly_forecast_values('310069')
+pp three_hourly_forecast_values('310069')
