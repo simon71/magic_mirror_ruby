@@ -9,7 +9,7 @@ require 'net/http'
 require 'json'
 require 'uri'
 
-@apikey = ''
+@apikey = ENV['METOFFICEAPIKEY']
 @base_url = 'http://datapoint.metoffice.gov.uk/public/data/'
 @format = 'json'
 
@@ -18,13 +18,14 @@ require 'uri'
 def sitelist_data
   res = "val/wxfcs/all/#{@format}/sitelist?"
   url = "#{@base_url}#{res}key=#{@apikey}"
+  pp url
   url = URI.parse(url)
   resp = Net::HTTP.get(url)
+  pp resp
   data = ::JSON.parse(resp)
   data['Locations']['Location'] # Step into the array to get location list
 end
 
-# All i need from the list is Authority name and Site name
 # Create a list to display all available locations
 def sitelist
   @fulllist = sitelist_data
@@ -50,7 +51,6 @@ def three_hourly_forecast_raw(region)
   resp = Net::HTTP.get(url)
   data = ::JSON.parse(resp)
   data['SiteRep']['DV']['Location'] # Step into array to get to forecasts data
-  pp data
 end
 
 # Get the headders from the data id, name, longitude and latittude
@@ -64,30 +64,30 @@ def three_hourly_forecast_headder(region)
   end
 end
 
-def three_hourly_forecast_values(region)
-  three_hourly_forecast = {}
-  raw_data = three_hourly_forecast_raw(region)
-  raw_data['Period'].map do |key, _value|
-    @date = key['value']
-    key['Rep'].map do |weather_data, _v|
-      three_hourly_forecast[@date] = forecast_hash(weather_data)
-    end
-  end
-  three_hourly_forecast
-end
-# Create a hash of the forecast data with new keys as
-# the ones provided by met office are not great
 # def three_hourly_forecast_values(region)
 #   three_hourly_forecast = {}
 #   raw_data = three_hourly_forecast_raw(region)
 #   raw_data['Period'].map do |key, _value|
 #     @date = key['value']
 #     key['Rep'].map do |weather_data, _v|
-#       three_hourly_forecast = forecast_hash(weather_data)
+#       three_hourly_forecast[@date] = forecast_hash(weather_data)
 #     end
 #   end
 #   three_hourly_forecast
 # end
+# Create a hash of the forecast data with new keys as
+# the ones provided by met office are not great
+def three_hourly_forecast_values(region)
+  three_hourly_forecast = {}
+  raw_data = three_hourly_forecast_raw(region)
+  raw_data['Period'].map do |key, _value|
+    @date = key['value']
+    key['Rep'].map do |weather_data, _v|
+      three_hourly_forecast = forecast_hash(weather_data)
+    end
+  end
+  three_hourly_forecast
+end
 
 # Complie weather data hash
 def forecast_hash(weather_data)
