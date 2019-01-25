@@ -64,17 +64,6 @@ def three_hourly_forecast_headder(region)
   end
 end
 
-# def three_hourly_forecast_values(region)
-#   three_hourly_forecast = {}
-#   raw_data = three_hourly_forecast_raw(region)
-#   raw_data['Period'].map do |key, _value|
-#     @date = key['value']
-#     key['Rep'].map do |weather_data, _v|
-#       three_hourly_forecast[@date] = forecast_hash(weather_data)
-#     end
-#   end
-#   three_hourly_forecast
-# end
 # Create a hash of the forecast data with new keys as
 # the ones provided by met office are not great
 def three_hourly_forecast_values(region)
