@@ -96,4 +96,4 @@ def forecast_hash(weather_data)
   }
 end
 
-pp three_hourly_forecast_values('310069')
+three_hourly_forecast_values('310069')
